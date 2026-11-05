@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>電影院訂票管理系統｜SQL 互動練習室</title>
+<style>
+:root{--navy:#172554;--blue:#3157c8;--ink:#182338;--muted:#667085;--line:#e4e8f0;--bg:#f4f6fb;--card:#fff;--green:#16845b;--red:#c0392b}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 system-ui,-apple-system,"Noto Sans TC",sans-serif}
+header{color:white;background:linear-gradient(120deg,#101b3d,#3157c8);padding:38px max(20px,calc((100% - 1180px)/2)) 34px}
+.eyebrow{font-size:12px;letter-spacing:2px;color:#cbd5ff}h1{font-size:clamp(27px,4vw,40px);line-height:1.25;margin:9px 0}header p{max-width:780px;color:#e1e8ff;margin:0}
+nav{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);display:flex;gap:5px;overflow:auto;padding:9px max(14px,calc((100% - 1180px)/2))}
+nav a{white-space:nowrap;text-decoration:none;color:#475467;padding:7px 11px;border-radius:8px;font-size:14px}nav a:hover{background:#edf1ff;color:var(--blue)}
+main{max-width:1180px;margin:25px auto;padding:0 18px 55px}.section{margin:30px 0;scroll-margin-top:75px}.section h2{font-size:23px;margin:0 0 13px}.lead{color:var(--muted);margin:-7px 0 14px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 7px 25px #1e31500c}.card h3{margin:0 0 8px;font-size:17px}.muted{color:var(--muted)}.chip{display:inline-block;border-radius:99px;background:#edf1ff;color:#3157c8;padding:2px 9px;font-size:12px;margin:2px}
+.callout{border-left:4px solid #7189e8;background:#eff3ff;padding:12px 14px;border-radius:0 9px 9px 0;margin-top:13px}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;background:#f8f9fd;padding:16px;border-radius:11px}.entity{min-width:155px;background:#fff;border:1px solid #cbd4ec;border-radius:10px;overflow:hidden}.entity b{display:block;background:#e9eeff;padding:7px 10px;color:#243d91}.entity ul{margin:8px 10px 11px;padding-left:17px;font-size:13px}.rel{font-size:12px;color:#3157c8;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#f7f8fc;color:#475467;white-space:nowrap}.scroll{overflow:auto}code{font-family:ui-monospace,Consolas,monospace;background:#f0f2f8;padding:2px 5px;border-radius:5px}
+.query-layout{display:grid;grid-template-columns:290px minmax(0,1fr);gap:15px}.q-list{display:flex;flex-direction:column;gap:8px}.qbtn{text-align:left;background:#fff;border:1px solid var(--line);padding:10px 12px;border-radius:9px;color:var(--ink);cursor:pointer}.qbtn.active{background:#edf1ff;border-color:#8298ed;color:#2345ae;font-weight:700}.qbtn small{display:block;color:var(--muted);font-weight:400;margin-top:3px}
+textarea{width:100%;min-height:190px;resize:vertical;border:1px solid #cbd2e1;border-radius:10px;padding:13px;font:13.5px/1.65 ui-monospace,Consolas,monospace;color:#18243b;background:#fbfcff;outline:none}textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #3157c81b}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}button{font:inherit;border:0;border-radius:9px;padding:9px 14px;font-weight:650;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#edf0f7;color:#344054}.primary:hover{background:#2546ad}.status{font-size:13px;background:#f8f9fc;padding:10px 12px;border-radius:8px;color:#475467}.ok{color:var(--green)}.err{color:var(--red);white-space:pre-wrap}.result{overflow:auto;border:1px solid var(--line);border-radius:9px;margin-top:11px}.result table{min-width:420px}.explain{margin-top:12px;background:#f7f8fc;border-radius:9px;padding:12px;font-size:14px}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px}.compare .card{box-shadow:none}.version{font-size:12px;font-weight:700;color:var(--green)}.sql{display:block;white-space:normal;overflow-wrap:anywhere;margin:7px 0;background:#f3f5fa;padding:9px;border-radius:8px;font:12.5px/1.6 ui-monospace,monospace}
+footer{text-align:center;color:var(--muted);padding:24px}
+@media(max-width:800px){.query-layout,.grid,.compare{grid-template-columns:1fr}.q-list{display:grid;grid-template-columns:1fr 1fr}.entity{min-width:140px}}
+@media(max-width:480px){main{padding-inline:12px}.q-list{grid-template-columns:1fr}.card{padding:14px}}
+</style>
+</head>
+<body>
+<header><div class="eyebrow">DATABASE DESIGN · SQL PRACTICE</div><h1>電影院訂票管理系統</h1><p>從電影、場次、座位到會員訂票，建立一套可查詢、可統計的示範資料庫。你可以編輯 SQL、實際執行，並比較不同條件造成的結果差異。</p></header>
+<nav><a href="#case">案例背景</a><a href="#erd">資料庫設計</a><a href="#sample">樣本資料</a><a href="#practice">SQL 查詢操作</a><a href="#compare">結果比較</a><a href="#report">報告解說</a></nav>
+<main>
+<section class="section" id="case"><h2>01｜案例背景</h2><div class="grid">
+<div class="card"><h3>資料庫給誰使用？</h3><p>本系統提供電影院管理員、售票人員與會員使用。管理員負責管理電影與放映場次；售票人員需要確認座位狀態、查詢訂單；會員則需要查詢場次與自己的訂票紀錄。</p></div>
+<div class="card"><h3>要解決什麼問題？</h3><ul><li>快速查詢電影與放映時間。</li><li>確認某場次哪些座位已被訂走。</li><li>查詢會員訂票紀錄及訂單狀態。</li><li>統計電影票房，協助安排熱門場次。</li></ul></div></div>
+<div class="callout"><b>系統規則：</b>每筆 Bookings 訂票紀錄代表一位會員在某場次購買一個座位。狀態分為 <code>paid</code>（已付款）、<code>pending</code>（待付款）、<code>cancelled</code>（已取消）。本範例把 paid 與 pending 視為暫時占用座位，cancelled 不占位。</div></section>
+
+<section class="section" id="erd"><h2>02｜資料庫設計與 ERD</h2><p class="lead">本專題使用 5 張資料表，透過主鍵（PK）與外鍵（FK）建立關聯。</p>
+<div class="card"><h3>ERD｜實體關係圖</h3><div class="diagram">
+<div class="entity"><b>Members 會員</b><ul><li>member_id PK</li><li>name</li><li>email</li><li>join_date</li></ul></div><span class="rel">1 ─ N</span>
+<div class="entity"><b>Bookings 訂票</b><ul><li>booking_id PK</li><li>member_id FK</li><li>showtime_id FK</li><li>seat_id FK</li><li>status / price</li></ul></div>
+<span class="rel">N ─ 1</span><div class="entity"><b>Showtimes 場次</b><ul><li>showtime_id PK</li><li>movie_id FK</li><li>start_time</li><li>hall</li></ul></div>
+<span class="rel">N ─ 1</span><div class="entity"><b>Movies 電影</b><ul><li>movie_id PK</li><li>title</li><li>genre</li><li>duration</li><li>rating</li></ul></div>
+</div><div class="diagram" style="margin-top:9px"><div class="entity"><b>Seats 座位</b><ul><li>seat_id PK</li><li>seat_code</li><li>seat_type</li></ul></div><span class="rel">1 ─ N</span><div class="entity"><b>Bookings 訂票</b><ul><li>每筆訂票對應一個座位</li><li>同場次同座位不可重複有效訂票</li></ul></div></div>
+<p class="muted" style="font-size:13px">關係說明：一位會員可以有多筆訂票；一部電影可以安排多個場次；一個場次可以有多筆訂票；一個座位也會在不同場次被不同會員使用。Bookings 是連結會員、場次與座位的交易資料表。</p></div>
+<div class="card" style="margin-top:14px"><h3>欄位與用途說明</h3><div class="scroll"><table><thead><tr><th>資料表</th><th>欄位</th><th>型態</th><th>鍵值</th><th>說明</th></tr></thead><tbody>
+<tr><td>Members</td><td>member_id</td><td>INTEGER</td><td>PK</td><td>會員唯一編號</td></tr><tr><td>Members</td><td>name、email</td><td>TEXT</td><td>—</td><td>會員姓名、電子郵件</td></tr><tr><td>Members</td><td>join_date</td><td>TEXT</td><td>—</td><td>加入日期</td></tr>
+<tr><td>Movies</td><td>movie_id</td><td>INTEGER</td><td>PK</td><td>電影唯一編號</td></tr><tr><td>Movies</td><td>title、genre</td><td>TEXT</td><td>—</td><td>電影名稱、類型</td></tr><tr><td>Movies</td><td>duration</td><td>INTEGER</td><td>—</td><td>片長（分鐘）</td></tr><tr><td>Movies</td><td>rating</td><td>TEXT</td><td>—</td><td>電影分級</td></tr>
+<tr><td>Showtimes</td><td>showtime_id</td><td>INTEGER</td><td>PK</td><td>場次唯一編號</td></tr><tr><td>Showtimes</td><td>movie_id</td><td>INTEGER</td><td>FK</td><td>對應 Movies.movie_id</td></tr><tr><td>Showtimes</td><td>start_time、hall</td><td>TEXT</td><td>—</td><td>放映開始時間、影廳</td></tr>
+<tr><td>Seats</td><td>seat_id</td><td>INTEGER</td><td>PK</td><td>座位唯一編號</td></tr><tr><td>Seats</td><td>seat_code、seat_type</td><td>TEXT</td><td>—</td><td>座位代碼、座位類型</td></tr>
+<tr><td>Bookings</td><td>booking_id</td><td>INTEGER</td><td>PK</td><td>訂票唯一編號</td></tr><tr><td>Bookings</td><td>member_id、showtime_id、seat_id</td><td>INTEGER</td><td>FK</td><td>會員、場次、座位的關聯</td></tr><tr><td>Bookings</td><td>status、booked_at</td><td>TEXT</td><td>—</td><td>訂票狀態、訂票時間</td></tr><tr><td>Bookings</td><td>price</td><td>INTEGER</td><td>—</td><td>該筆訂票價格（元）</td></tr>
+</tbody></table></div></div></section>
+
+<section class="section" id="sample"><h2>03｜樣本資料</h2><p class="lead">以下是網站實際載入的示範資料，可用查詢題目驗證。</p><div class="grid">
+<div class="card"><h3>Members｜會員（4 筆）</h3><div class="scroll"><table><tr><th>ID</th><th>姓名</th><th>Email</th></tr><tr><td>1</td><td>林小安</td><td>an@example.com</td></tr><tr><td>2</td><td>陳柏宇</td><td>po@example.com</td></tr><tr><td>3</td><td>王怡婷</td><td>yi@example.com</td></tr><tr><td>4</td><td>張家豪</td><td>hao@example.com</td></tr></table></div></div>
+<div class="card"><h3>Movies｜電影（4 筆）</h3><div class="scroll"><table><tr><th>ID</th><th>片名</th><th>類型</th><th>片長</th></tr><tr><td>201</td><td>星際遠征</td><td>科幻</td><td>130</td></tr><tr><td>202</td><td>最後任務</td><td>動作</td><td>115</td></tr><tr><td>203</td><td>夏日約定</td><td>愛情</td><td>105</td></tr><tr><td>204</td><td>深海謎航</td><td>懸疑</td><td>122</td></tr></table></div></div>
+<div class="card"><h3>Showtimes｜場次（4 筆）</h3><div class="scroll"><table><tr><th>ID</th><th>電影ID</th><th>時間</th><th>影廳</th></tr><tr><td>301</td><td>201</td><td>2026-11-06 14:00</td><td>1 廳</td></tr><tr><td>302</td><td>202</td><td>2026-11-06 17:30</td><td>2 廳</td></tr><tr><td>303</td><td>203</td><td>2026-11-07 13:00</td><td>1 廳</td></tr><tr><td>304</td><td>204</td><td>2026-11-07 19:00</td><td>3 廳</td></tr></table></div></div>
+<div class="card"><h3>Seats｜座位（8 筆）</h3><div class="scroll"><table><tr><th>ID</th><th>座位</th><th>類型</th></tr><tr><td>1</td><td>A1</td><td>一般</td></tr><tr><td>2</td><td>A2</td><td>一般</td></tr><tr><td>3</td><td>A3</td><td>一般</td></tr><tr><td>4</td><td>A4</td><td>一般</td></tr><tr><td>5</td><td>B1</td><td>一般</td></tr><tr><td>6</td><td>B2</td><td>一般</td></tr><tr><td>7</td><td>B3</td><td>一般</td></tr><tr><td>8</td><td>B4</td><td>一般</td></tr></table></div></div></div>
+<div class="card" style="margin-top:14px"><h3>Bookings｜訂票紀錄（7 筆）</h3><div class="scroll"><table><tr><th>訂票ID</th><th>會員</th><th>場次</th><th>座位</th><th>狀態</th><th>價格</th></tr><tr><td>4001</td><td>1</td><td>301</td><td>A1</td><td>paid</td><td>320</td></tr><tr><td>4002</td><td>2</td><td>301</td><td>A2</td><td>paid</td><td>320</td></tr><tr><td>4003</td><td>1</td><td>302</td><td>B1</td><td>pending</td><td>300</td></tr><tr><td>4004</td><td>3</td><td>302</td><td>B2</td><td>paid</td><td>300</td></tr><tr><td>4005</td><td>4</td><td>303</td><td>A1</td><td>cancelled</td><td>280</td></tr><tr><td>4006</td><td>2</td><td>303</td><td>A2</td><td>paid</td><td>280</td></tr><tr><td>4007</td><td>3</td><td>304</td><td>C1</td><td>paid</td><td>310</td></tr></table></div></div>
+</section>
+
+<section class="section" id="practice"><h2>04｜SQL 查詢操作</h2><p class="lead">選擇題目載入 SQL，修改後按下執行。網站會在瀏覽器內使用 SQLite 執行，顯示實際資料或錯誤訊息。</p>
+<div class="query-layout"><div class="card"><h3>練習題目</h3><div class="q-list" id="qList"></div><div class="callout" id="goal">選擇一題開始。</div></div>
+<div class="card"><h3 id="qTitle">SQL 編輯器</h3><textarea id="editor" spellcheck="false"></textarea><div class="actions"><button class="primary" id="run">▶ 執行 SQL</button><button class="secondary" id="reset">還原範例</button><button class="secondary" id="expected">查看預期結果</button></div><div id="message" class="status">正在建立練習資料庫……</div><div id="output" class="result"></div><div id="explanation" class="explain">選擇左側題目後，這裡會顯示 SQL 解說。</div></div></div>
+</section>
+
+<section class="section" id="compare"><h2>05｜結果比較：修改 SQL 會發生什麼事？</h2><p class="lead">以「統計電影票房」為例，觀察是否加入訂票狀態條件會如何影響統計結果。</p>
+<div class="compare">
+<div class="card"><span class="version">版本 A｜只統計已付款</span><h3>較接近實際票房</h3><code class="sql">WHERE Bookings.status = 'paid'</code><p>只計算已付款的訂票紀錄。待付款與已取消訂票不會被算入收入。</p><p><b>預期合計：1,230 元</b></p></div>
+<div class="card"><span class="version">版本 B｜不限制狀態</span><h3>所有訂票都計算</h3><code class="sql">-- 移除 WHERE 狀態條件</code><p>會把 pending 與 cancelled 也加進去。雖然總額增加，但不能代表已收取的票房。</p><p><b>預期合計：2,110 元</b></p></div>
+</div>
+<div class="callout"><b>為什麼不同？</b>樣本資料中 pending 有 300 元，cancelled 有 280 元。移除 paid 條件後，總額會多算 580 元。這說明 SQL 查詢必須依照題目定義決定篩選條件，而不是只看查詢能不能執行。</div>
+<div class="card" style="margin-top:14px"><h3>可自行驗證的 SQL</h3><p class="muted">將以下兩種版本分別貼到上方編輯器執行，對照結果。</p><b>版本 A</b><pre class="sql">SELECT Movies.title, SUM(Bookings.price) AS revenue
+FROM Bookings
+JOIN Showtimes ON Bookings.showtime_id = Showtimes.showtime_id
+JOIN Movies ON Showtimes.movie_id = Movies.movie_id
+WHERE Bookings.status = 'paid'
+GROUP BY Movies.movie_id, Movies.title;</pre><b>版本 B</b><pre class="sql">SELECT Movies.title, SUM(Bookings.price) AS total
+FROM Bookings
+JOIN Showtimes ON Bookings.showtime_id = Showtimes.showtime_id
+JOIN Movies ON Showtimes.movie_id = Movies.movie_id
+GROUP BY Movies.movie_id, Movies.title;</pre></div>
+</section>
+
+
+</main><footer>電影院訂票管理系統｜SQL 互動練習室 · SQLite 示範資料</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+<script>
+const exercises=[
+{title:"Q1｜查詢所有電影",goal:"列出電影名稱、類型、片長與分級，依片長由長到短排序。",sql:"SELECT title, genre, duration, rating\nFROM Movies\nORDER BY duration DESC;",explain:"SELECT 選擇要顯示的欄位；FROM 指定 Movies；ORDER BY duration DESC 讓片長較長的電影排在前面。",expected:"4 部電影：星際遠征、深海謎航、最後任務、夏日約定。"},
+{title:"Q2｜查詢電影放映場次",goal:"顯示電影名稱、開始時間與影廳。練習 JOIN。",sql:"SELECT Movies.title, Showtimes.start_time, Showtimes.hall\nFROM Movies\nJOIN Showtimes ON Movies.movie_id = Showtimes.movie_id\nORDER BY Showtimes.start_time;",explain:"Movies 與 Showtimes 透過 movie_id 連接，才能同時顯示電影名稱與放映時間。",expected:"4 筆場次，依時間由早到晚排列。"},
+{title:"Q3｜查詢某場次已占用座位",goal:"查詢場次 301 中已付款或待付款的座位。",sql:"SELECT Seats.seat_code, Bookings.status\nFROM Bookings\nJOIN Seats ON Bookings.seat_id = Seats.seat_id\nWHERE Bookings.showtime_id = 301\n  AND Bookings.status IN ('paid', 'pending')\nORDER BY Seats.seat_code;",explain:"JOIN 將訂票紀錄與座位表連接；WHERE 指定場次 301，IN 篩選 paid 或 pending。取消的訂票不算占位。",expected:"A1、A2 兩個座位，狀態皆為 paid。"},
+{title:"Q4｜查詢會員訂票紀錄",goal:"查詢會員陳柏宇的訂票紀錄，顯示電影、時間、座位與狀態。",sql:"SELECT Members.name, Movies.title, Showtimes.start_time,\n       Seats.seat_code, Bookings.status\nFROM Bookings\nJOIN Members ON Bookings.member_id = Members.member_id\nJOIN Showtimes ON Bookings.showtime_id = Showtimes.showtime_id\nJOIN Movies ON Showtimes.movie_id = Movies.movie_id\nJOIN Seats ON Bookings.seat_id = Seats.seat_id\nWHERE Members.member_id = 2\nORDER BY Showtimes.start_time;",explain:"這題需要連接五張表，透過訂票紀錄中的外鍵取得會員、電影、場次與座位資訊。WHERE Members.member_id = 2 篩選陳柏宇。",expected:"2 筆：星際遠征 A2（paid）、夏日約定 A2（paid）。"},
+{title:"Q5｜統計各電影已付款票房",goal:"計算每部電影已付款的票房，並由高到低排序。",sql:"SELECT Movies.title, SUM(Bookings.price) AS revenue\nFROM Bookings\nJOIN Showtimes ON Bookings.showtime_id = Showtimes.showtime_id\nJOIN Movies ON Showtimes.movie_id = Movies.movie_id\nWHERE Bookings.status = 'paid'\nGROUP BY Movies.movie_id, Movies.title\nORDER BY revenue DESC;",explain:"SUM(Bookings.price) 加總票價；GROUP BY 將同一部電影的訂票合併統計；WHERE 僅計算已付款紀錄。",expected:"星際遠征 640 元、深海謎航 310 元、最後任務 300 元、夏日約定 280 元。"},
+{title:"Q6｜統計每位會員訂票數",goal:"統計每位會員的訂票紀錄筆數，包含沒有訂票的會員。",sql:"SELECT Members.name, COUNT(Bookings.booking_id) AS booking_count\nFROM Members\nLEFT JOIN Bookings ON Members.member_id = Bookings.member_id\nGROUP BY Members.member_id, Members.name\nORDER BY booking_count DESC;",explain:"LEFT JOIN 會保留左側 Members 的所有會員，即使沒有訂票也會顯示；COUNT 計算訂票編號數量。",expected:"林小安 2 筆、陳柏宇 2 筆、王怡婷 2 筆、張家豪 1 筆。"}
+];
+let db=null,selected=0;
+const list=document.getElementById('qList'),editor=document.getElementById('editor');
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function choose(i){selected=i;document.querySelectorAll('.qbtn').forEach((b,j)=>b.classList.toggle('active',i===j));editor.value=exercises[i].sql;document.getElementById('qTitle').textContent=exercises[i].title;document.getElementById('goal').textContent=exercises[i].goal;document.getElementById('explanation').textContent=exercises[i].explain;document.getElementById('output').innerHTML='';document.getElementById('message').textContent='範例 SQL 已載入，可以修改後執行。'}
+exercises.forEach((q,i)=>{const b=document.createElement('button');b.className='qbtn';b.innerHTML=escapeHtml(q.title)+'<small>'+escapeHtml(q.goal)+'</small>';b.onclick=()=>choose(i);list.appendChild(b)});
+function showTable(rows,cols){if(!cols||!cols.length){document.getElementById('output').innerHTML='<div class="status">SQL 執行成功，沒有回傳資料列。</div>';return}let h='<table><thead><tr>'+cols.map(c=>'<th>'+escapeHtml(c)+'</th>').join('')+'</tr></thead><tbody>';rows.forEach(r=>{h+='<tr>'+r.map(v=>'<td>'+escapeHtml(v===null?'NULL':v)+'</td>').join('')+'</tr>'});h+='</tbody></table>';document.getElementById('output').innerHTML=h}
+async function init(){const m=document.getElementById('message');try{if(!window.initSqlJs)throw new Error('SQLite 引擎載入失敗。請確認網路連線後重新整理。');const SQL=await initSqlJs({locateFile:f=>'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/'+f});db=new SQL.Database();db.run(`
+PRAGMA foreign_keys = ON;
+CREATE TABLE Members(member_id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE, join_date TEXT);
+CREATE TABLE Movies(movie_id INTEGER PRIMARY KEY, title TEXT NOT NULL, genre TEXT, duration INTEGER, rating TEXT);
+CREATE TABLE Showtimes(showtime_id INTEGER PRIMARY KEY, movie_id INTEGER NOT NULL, start_time TEXT NOT NULL, hall TEXT NOT NULL, FOREIGN KEY(movie_id) REFERENCES Movies(movie_id));
+CREATE TABLE Seats(seat_id INTEGER PRIMARY KEY, seat_code TEXT NOT NULL UNIQUE, seat_type TEXT NOT NULL);
+CREATE TABLE Bookings(booking_id INTEGER PRIMARY KEY, member_id INTEGER NOT NULL, showtime_id INTEGER NOT NULL, seat_id INTEGER NOT NULL, status TEXT NOT NULL CHECK(status IN ('paid','pending','cancelled')), booked_at TEXT, price INTEGER NOT NULL, FOREIGN KEY(member_id) REFERENCES Members(member_id), FOREIGN KEY(showtime_id) REFERENCES Showtimes(showtime_id), FOREIGN KEY(seat_id) REFERENCES Seats(seat_id), UNIQUE(showtime_id, seat_id));
+INSERT INTO Members VALUES(1,'林小安','an@example.com','2026-01-10'),(2,'陳柏宇','po@example.com','2026-02-14'),(3,'王怡婷','yi@example.com','2026-03-01'),(4,'張家豪','hao@example.com','2026-04-20');
+INSERT INTO Movies VALUES(201,'星際遠征','科幻',130,'輔12級'),(202,'最後任務','動作',115,'輔15級'),(203,'夏日約定','愛情',105,'普遍級'),(204,'深海謎航','懸疑',122,'保護級');
+INSERT INTO Showtimes VALUES(301,201,'2026-11-06 14:00','1 廳'),(302,202,'2026-11-06 17:30','2 廳'),(303,203,'2026-11-07 13:00','1 廳'),(304,204,'2026-11-07 19:00','3 廳');
+INSERT INTO Seats VALUES(1,'A1','一般'),(2,'A2','一般'),(3,'A3','一般'),(4,'A4','一般'),(5,'B1','一般'),(6,'B2','一般'),(7,'B3','一般'),(8,'B4','一般');
+INSERT INTO Bookings VALUES(4001,1,301,1,'paid','2026-11-01 10:00',320),(4002,2,301,2,'paid','2026-11-01 10:15',320),(4003,1,302,5,'pending','2026-11-02 12:00',300),(4004,3,302,6,'paid','2026-11-02 13:00',300),(4005,4,303,1,'cancelled','2026-11-03 09:00',280),(4006,2,303,2,'paid','2026-11-03 09:30',280),(4007,3,304,1,'paid','2026-11-04 16:00',310);
+`);m.innerHTML='<span class="ok">資料庫建立完成！共有 5 張資料表，可以開始練習。</span>';choose(0)}catch(e){m.innerHTML='<span class="err">'+escapeHtml(e.message)+'</span>'}}
+document.getElementById('run').onclick=()=>{const m=document.getElementById('message'),out=document.getElementById('output');if(!db){m.textContent='資料庫尚未初始化。';return}try{const results=db.exec(editor.value);if(!results.length){m.innerHTML='<span class="ok">執行成功。</span>';out.innerHTML='<div class="status">語句已執行，沒有查詢結果可顯示。</div>';return}let n=0;results.forEach(r=>{n+=r.values.length;showTable(r.values,r.columns)});m.innerHTML='<span class="ok">執行成功｜共回傳 '+n+' 筆資料。</span>'}catch(e){m.innerHTML='<span class="err">SQL 錯誤：'+escapeHtml(e.message)+'</span>';out.innerHTML=''}};
+document.getElementById('reset').onclick=()=>choose(selected);
+document.getElementById('expected').onclick=()=>{document.getElementById('output').innerHTML='<div class="status">'+escapeHtml(exercises[selected].expected)+'</div>';document.getElementById('message').textContent='這是預期結果摘要；請執行 SQL 查看完整實際結果。'};
+init();
+</script>
+</body></html>
